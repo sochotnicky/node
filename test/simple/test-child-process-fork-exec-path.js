@@ -44,9 +44,12 @@ else {
   fs.writeFileSync(copyPath, fs.readFileSync(nodePath));
   fs.chmodSync(copyPath, '0755');
 
+  // slow but simple
+  var env_copy = JSON.parse(JSON.stringify(process.env));
+  env_copy.FORK='true';
   var child = require('child_process').fork(__filename, {
     execPath: copyPath,
-    env: { FORK: 'true' }
+    env: env_copy
   });
   child.on('message', common.mustCall(function(recv) {
     assert.deepEqual(msg, recv);
